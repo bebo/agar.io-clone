@@ -3,21 +3,25 @@ var global = require('./global');
 class ChatClient {
     constructor(params) {
         this.canvas = global.canvas;
+        this.cntr = 0;
         this.socket = global.socket;
         this.mobile = global.mobile;
         this.player = global.player;
         var self = this;
+        this.msgs = [];
         this.commands = {};
-        var input = document.getElementById('chatInput');
-        input.addEventListener('keypress', this.sendChat.bind(this));
-        input.addEventListener('keyup', function(key) {
-            input = document.getElementById('chatInput');
-            key = key.which || key.keyCode;
-            if (key === global.KEY_ESC) {
-                input.value = '';
-                self.canvas.cv.focus();
-            }
-        });
+        if (!this.mobile) {
+            var input = document.getElementById('chatInput');
+            input.addEventListener('keypress', this.sendChat.bind(this));
+            input.addEventListener('keyup', function(key) {
+                input = document.getElementById('chatInput');
+                key = key.which || key.keyCode;
+                if (key === global.KEY_ESC) {
+                    input.value = '';
+                    self.canvas.cv.focus();
+                }
+            });
+        }
         global.chatClient = this;
     }
 
@@ -25,6 +29,9 @@ class ChatClient {
 
     registerFunctions() {
         var self = this;
+        if (this.mobile) {
+            return;
+        }
         this.registerCommand('ping', 'Check your latency.', function () {
             self.checkLatency();
         });
@@ -65,9 +72,9 @@ class ChatClient {
 
     // Chat box implementation for the users.
     addChatLine(name, message, me) {
-        if (this.mobile) {
-            return;
-        }
+        // if (this.mobile) {
+        //     return;
+        // }
         var newline = document.createElement('li');
 
         // Colours the chat input correctly.
@@ -79,9 +86,9 @@ class ChatClient {
 
     // Chat box implementation for the system.
     addSystemLine(message) {
-        if (this.mobile) {
-            return;
-        }
+        // if (this.mobile) {
+        //     return;
+        // }
         var newline = document.createElement('li');
 
         // Colours the chat input correctly.
@@ -92,11 +99,42 @@ class ChatClient {
         this.appendMessage(newline);
     }
 
+    remove() {
+
+        var now = Date.now();
+        var msgs = [];
+        var chatList = document.getElementById('chatList');
+
+        this.msgs.forEach(function(node) {
+            var ms = _.split(node.id, ":")[2];
+            if (now - ms > 1000) {
+                var element = document.getElementById(node.id);
+                chatList.removeChild(element);
+            } else {
+                msgs.push(node);
+            }
+        });
+        this.msgs = msgs;
+        var that = this;
+        setTimeout(function() {that.remove()}, 500);
+    }
+
+    removeLater(node) {
+        if (this.msgs.length === 0) {
+            var that = this;
+            setTimeout(function() {that.remove()}, 1000);
+        }
+        this.msgs.push(node);
+    }
+
     // Places the message DOM node into the chat box.
     appendMessage(node) {
-        if (this.mobile) {
-            return;
-        }
+        // if (this.mobile) {
+        //     return;
+        // }
+        node.id = "msg:" + this.cntr + ":" + Date.now();;
+        this.cntr++;
+        this.removeLater(node);
         var chatList = document.getElementById('chatList');
         if (chatList.childNodes.length > 10) {
             chatList.removeChild(chatList.childNodes[0]);

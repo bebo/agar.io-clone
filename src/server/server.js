@@ -519,7 +519,7 @@ function tickPlayer(currentPlayer) {
                     users[numUser].cells.splice(collision.bUser.num, 1);
                 } else {
                     users.splice(numUser, 1);
-                    io.emit('playerDied', { name: collision.bUser.name });
+                    io.emit('playerDied', { name: collision.bUser.name, by: collision.aUser.name});
                     sockets[collision.bUser.id].emit('RIP');
                 }
             }
@@ -530,6 +530,7 @@ function tickPlayer(currentPlayer) {
 
     for(var z=0; z<currentPlayer.cells.length; z++) {
         var currentCell = currentPlayer.cells[z];
+        currentCell.name = currentPlayer.name;
         var playerCircle = new C(
             new V(currentCell.x, currentCell.y),
             currentCell.radius

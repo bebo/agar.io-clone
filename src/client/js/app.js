@@ -67,7 +67,7 @@ $(document).ready(function() {
         // Checks if the nick is valid.
         // if (validNick()) {
         //     nickErrorText.style.opacity = 0;
-            startGame('player');
+        startGame('player');
         // } else {
         //     nickErrorText.style.opacity = 1;
         // }
@@ -192,7 +192,7 @@ function setupSocket(socket) {
     socket.on('pong', function () {
         var latency = Date.now() - global.startPingTime;
         debug('Latency: ' + latency + 'ms');
-        window.chat.addSystemLine('Ping: ' + latency + 'ms');
+        // window.chat.addSystemLine('Ping: ' + latency + 'ms');
     });
 
     // Handle error.
@@ -218,10 +218,11 @@ function setupSocket(socket) {
         socket.emit('gotit', player);
         global.gameStart = true;
         debug('Game started at: ' + global.gameStart);
-        window.chat.addSystemLine('Connected to the game!');
-        window.chat.addSystemLine('Type <b>-help</b> for a list of commands.');
-        if (global.mobile) {
-            document.getElementById('gameAreaWrapper').removeChild(document.getElementById('chatbox'));
+        if (!global.mobile) {
+            window.chat.addSystemLine('Connected to the game!');
+            window.chat.addSystemLine('Type <b>-help</b> for a list of commands.');
+        } else {
+            document.getElementById('chatbox').removeChild(document.getElementById('chatInput'));
         }
 		c.focus();
     });
@@ -233,15 +234,15 @@ function setupSocket(socket) {
     });
 
     socket.on('playerDied', function (data) {
-        window.chat.addSystemLine('{GAME} - <b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> was eaten.');
+        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> was eaten by <b>' + (data.by.length < 1 ? 'An unnamed cell' : data.by));
     });
 
     socket.on('playerDisconnect', function (data) {
-        window.chat.addSystemLine('{GAME} - <b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> disconnected.');
+        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> disconnected.');
     });
 
     socket.on('playerJoin', function (data) {
-        window.chat.addSystemLine('{GAME} - <b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> joined.');
+        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> joined.');
     });
 
     socket.on('leaderboard', function (data) {
@@ -572,7 +573,7 @@ function gameLoop() {
         graph.textAlign = 'center';
         graph.fillStyle = '#FFFFFF';
         graph.font = 'bold 30px sans-serif';
-        graph.fillText('You died!', global.screenWidth / 2, constant.screenHeight / 2);
+        graph.fillText('You died!', global.screenWidth / 2, global.screenHeight / 2);
     }
     else if (!global.disconnected) {
         if (global.gameStart) {
