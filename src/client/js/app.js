@@ -18,7 +18,7 @@ if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
 }
 
 function startGame(type) {
-    global.playerName = "fpn"; //FIXME
+    // global.playerName = "";
     global.playerType = type;
 
     global.screenWidth = window.innerWidth;
@@ -46,8 +46,14 @@ function validNick() {
     return regex.exec(playerNameInput.value) !== null;
 }
 
-window.onload = function() {
-
+$(document).ready(function() {
+    Bebo.onReady(function(){
+        console.log("ready");
+        Bebo.User.getUser("me", function(err, u) {
+            console.log("me", err, u);
+            global.playerName = u.username;
+        });
+    });
     var btn = document.getElementById('startButton'),
         // btnS = document.getElementById('spectateButton'),
         nickErrorText = document.querySelector('#startMenu .input-error');
@@ -71,27 +77,54 @@ window.onload = function() {
     // var settings = document.getElementById('settings');
     var instructions = document.getElementById('instructions');
 
-    // settingsMenu.onclick = function () {
-    //     if (settings.style.maxHeight == '300px') {
-    //         settings.style.maxHeight = '0px';
-    //     } else {
-    //         settings.style.maxHeight = '300px';
-    //     }
-    // };
+});
 
-    playerNameInput.addEventListener('keypress', function (e) {
-        var key = e.which || e.keyCode;
+// window.onload = function() {
 
-        if (key === global.KEY_ENTER) {
-            if (validNick()) {
-                nickErrorText.style.opacity = 0;
-                startGame('player');
-            } else {
-                nickErrorText.style.opacity = 1;
-            }
-        }
-    });
-};
+//     var btn = document.getElementById('startButton'),
+//         // btnS = document.getElementById('spectateButton'),
+//         nickErrorText = document.querySelector('#startMenu .input-error');
+
+//     // btnS.onclick = function () {
+//     //     startGame('spectate');
+//     // };
+
+//     btn.onclick = function () {
+
+//         // Checks if the nick is valid.
+//         // if (validNick()) {
+//         //     nickErrorText.style.opacity = 0;
+//             startGame('player');
+//         // } else {
+//         //     nickErrorText.style.opacity = 1;
+//         // }
+//     };
+
+//     // var settingsMenu = document.getElementById('settingsButton');
+//     // var settings = document.getElementById('settings');
+//     var instructions = document.getElementById('instructions');
+
+//     // settingsMenu.onclick = function () {
+//     //     if (settings.style.maxHeight == '300px') {
+//     //         settings.style.maxHeight = '0px';
+//     //     } else {
+//     //         settings.style.maxHeight = '300px';
+//     //     }
+//     // };
+
+//     // playerNameInput.addEventListener('keypress', function (e) {
+//     //     var key = e.which || e.keyCode;
+
+//     //     if (key === global.KEY_ENTER) {
+//     //         if (validNick()) {
+//     //             nickErrorText.style.opacity = 0;
+//     //             startGame('player');
+//     //         } else {
+//     //             nickErrorText.style.opacity = 1;
+//     //         }
+//     //     }
+//     // });
+// };
 
 // TODO: Break out into GameControls.
 
