@@ -3,7 +3,7 @@ var ChatClient = require('./chat-client');
 var Canvas = require('./canvas');
 var global = require('./global');
 
-var playerNameInput = document.getElementById('playerNameInput');
+// var playerNameInput = document.getElementById('playerNameInput');
 var socket;
 var reason;
 
@@ -18,7 +18,7 @@ if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
 }
 
 function startGame(type) {
-    global.playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '').substring(0,25);
+    global.playerName = "fpn"; //FIXME
     global.playerType = type;
 
     global.screenWidth = window.innerWidth;
@@ -49,35 +49,35 @@ function validNick() {
 window.onload = function() {
 
     var btn = document.getElementById('startButton'),
-        btnS = document.getElementById('spectateButton'),
+        // btnS = document.getElementById('spectateButton'),
         nickErrorText = document.querySelector('#startMenu .input-error');
 
-    btnS.onclick = function () {
-        startGame('spectate');
-    };
+    // btnS.onclick = function () {
+    //     startGame('spectate');
+    // };
 
     btn.onclick = function () {
 
         // Checks if the nick is valid.
-        if (validNick()) {
-            nickErrorText.style.opacity = 0;
+        // if (validNick()) {
+        //     nickErrorText.style.opacity = 0;
             startGame('player');
-        } else {
-            nickErrorText.style.opacity = 1;
-        }
+        // } else {
+        //     nickErrorText.style.opacity = 1;
+        // }
     };
 
-    var settingsMenu = document.getElementById('settingsButton');
-    var settings = document.getElementById('settings');
+    // var settingsMenu = document.getElementById('settingsButton');
+    // var settings = document.getElementById('settings');
     var instructions = document.getElementById('instructions');
 
-    settingsMenu.onclick = function () {
-        if (settings.style.maxHeight == '300px') {
-            settings.style.maxHeight = '0px';
-        } else {
-            settings.style.maxHeight = '300px';
-        }
-    };
+    // settingsMenu.onclick = function () {
+    //     if (settings.style.maxHeight == '300px') {
+    //         settings.style.maxHeight = '0px';
+    //     } else {
+    //         settings.style.maxHeight = '300px';
+    //     }
+    // };
 
     playerNameInput.addEventListener('keypress', function (e) {
         var key = e.which || e.keyCode;
