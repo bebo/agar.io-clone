@@ -16,9 +16,14 @@ var debug = function(args) {
 if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
     global.mobile = true;
 }
+var firstGame = true;
 
 function startGame(type) {
     // global.playerName = "";
+    if (firstGame) {
+        firstGame = false;
+        Bebo.sendInvite({title: "{{{user.username}}}", body:"is playing agar"});
+    }
     global.playerType = type;
 
     global.screenWidth = window.innerWidth;
