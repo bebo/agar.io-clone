@@ -601,7 +601,9 @@ function gameloop() {
             if(users[i].type == 'player') {
                 topUsers.push({
                     id: users[i].id,
-                    name: users[i].name
+                    name: users[i].name,
+                    x: users[i].x,
+                    y: users[i].y
                 });
             }
         }

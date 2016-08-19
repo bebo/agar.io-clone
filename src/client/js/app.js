@@ -250,25 +250,40 @@ function setupSocket(socket) {
         window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> joined.');
     });
 
+    var PTR = ['↖&#xfe0e;', '←&#xfe0e;', '↙&#xfe0e;', '↓&#xfe0e;', '↘&#xfe0e;', '→&#xfe0e;', '↗&#xfe0e;', '↑&#xfe0e;'];
+    function getDirectionHint(l) {
+        if (!l.id || l.id === player.id) {
+            return "";
+        }
+        var x = l.x - player.x;
+        var y = l.y - player.y;
+        var direction = 3 + Math.round(Math.atan2(x, y) * 4 / Math.PI);
+        return PTR[direction];
+    }
+
     socket.on('leaderboard', function (data) {
         leaderboard = data.leaderboard;
         var status = '<span class="title">Leaderboard</span>';
+        status += "<ul>";
         for (var i = 0; i < leaderboard.length; i++) {
-            status += '<br />';
+            status += '<li id="lb_' + leaderboard[i].id + '"><div class="dir">' + getDirectionHint(leaderboard[i]) + '</div>';
             if (leaderboard[i].id == player.id){
                 if(leaderboard[i].name.length !== 0)
-                    status += '<span class="me">' + (i + 1) + '. ' + leaderboard[i].name + "</span>";
+                    status += '<span class="me">' + leaderboard[i].name + "</span>";
                 else
-                    status += '<span class="me">' + (i + 1) + ". An unnamed cell</span>";
+                    status += '<span class="me">' + "An unnamed cell</span>";
             } else {
                 if(leaderboard[i].name.length !== 0)
-                    status += (i + 1) + '. ' + leaderboard[i].name;
+                    status += '<span ">' + leaderboard[i].name + "</span>";
                 else
-                    status += (i + 1) + '. An unnamed cell';
+                    status += 'An unnamed cell';
             }
+            status += '</li>';
         }
+        status += '</ul>';
         //status += '<br />Players: ' + data.players;
         document.getElementById('status').innerHTML = status;
+        updateDirectionHints();
     });
 
     socket.on('serverMSG', function (data) {
@@ -283,6 +298,7 @@ function setupSocket(socket) {
     // Handle movement.
     socket.on('serverTellPlayerMove', function (userData, foodsList, massList, virusList) {
         var playerData;
+
         for(var i =0; i< userData.length; i++) {
             if(typeof(userData[i].id) == "undefined") {
                 playerData = userData[i];
