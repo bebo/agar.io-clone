@@ -116,13 +116,13 @@ class ChatClient {
         });
         this.msgs = msgs;
         var that = this;
-        setTimeout(function() {that.remove()}, 500);
+        setTimeout(function() {that.remove();}, 500);
     }
 
     removeLater(node) {
         if (this.msgs.length === 0) {
             var that = this;
-            setTimeout(function() {that.remove()}, 1000);
+            setTimeout(function() {that.remove();}, 1000);
         }
         this.msgs.push(node);
     }
@@ -132,7 +132,7 @@ class ChatClient {
         // if (this.mobile) {
         //     return;
         // }
-        node.id = "msg:" + this.cntr + ":" + Date.now();;
+        node.id = "msg:" + this.cntr + ":" + Date.now();
         this.cntr++;
         this.removeLater(node);
         var chatList = document.getElementById('chatList');
