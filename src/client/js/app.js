@@ -251,14 +251,17 @@ function setupSocket(socket) {
         window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> joined.');
     });
 
-    var PTR = ['↖&#xfe0e;', '←&#xfe0e;', '↙&#xfe0e;', '↓&#xfe0e;', '↘&#xfe0e;', '→&#xfe0e;', '↗&#xfe0e;', '↑&#xfe0e;'];
+    var PTR = ['↑&#xfe0e;', '↖&#xfe0e;', '←&#xfe0e;', '↙&#xfe0e;', '↓&#xfe0e;', '↘&#xfe0e;', '→&#xfe0e;', '↗&#xfe0e;', '↑&#xfe0e;'];
     function getDirectionHint(l) {
         if (!l.id || l.id === player.id) {
             return "";
         }
         var x = l.x - player.x;
         var y = l.y - player.y;
-        var direction = 3 + Math.round(Math.atan2(x, y) * 4 / Math.PI);
+        var direction = 4 + Math.round(Math.atan2(x, y) * 4 / Math.PI);
+        if (PTR[direction] === undefined) {
+            console.log("PTR UNDEFINED", direction, x, y);
+        }
         return PTR[direction];
     }
 
