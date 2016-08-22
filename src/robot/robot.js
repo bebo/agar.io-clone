@@ -81,6 +81,8 @@ module.exports = {
         // Death.
         socket.on('RIP', function () {
             console.log('you are dead');
+            // restart
+            socket.emit('respawn');
         });
 
         socket.on('kick', function (data) {
