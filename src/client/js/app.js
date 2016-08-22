@@ -285,6 +285,7 @@ function setupSocket(socket) {
             status += '</li>';
         }
         status += '</ul>';
+        status += "fps: " + global.fps;
         //status += '<br />Players: ' + data.players;
         document.getElementById('status').innerHTML = status;
     });
@@ -584,9 +585,33 @@ window.cancelAnimFrame = (function(handle) {
             window.mozCancelAnimationFrame;
 })();
 
+var fps_sample = 0;
+var fps_cnt = 0;
+var fps_last = Date.now();
+var fps_sample_size = 30;
+var slow_cnt = 0;
+
+function fps() {
+    var now = Date.now();
+    var delta = (now - fps_last);
+    if (delta > 66) {
+        slow_cnt += 1;
+    }
+    fps_sample += delta;
+    fps_cnt = (fps_cnt +1) % fps_sample_size;
+    if (fps_cnt === 0) {
+        global.fps = Math.round(10000 * fps_sample_size / fps_sample)/10;
+        console.log("FPS", global.fps, slow_cnt , fps_sample_size, fps_sample, "/30");
+        fps_sample = 0;
+        slow_cnt = 0;
+    }
+    fps_last = now;
+}
+
 function animloop() {
     global.animLoopHandle = window.requestAnimFrame(animloop);
     gameLoop();
+    fps();
 }
 
 function gameLoop() {
