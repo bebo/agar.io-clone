@@ -25,6 +25,7 @@ function startGame(type) {
         Bebo.sendInvite({title: "{{{user.username}}}", body:"is playing agar"});
     }
     global.playerType = type;
+    global.toggleMassState = 1;
 
     global.screenWidth = window.innerWidth;
     global.screenHeight = window.innerHeight;
@@ -283,7 +284,6 @@ function setupSocket(socket) {
         status += '</ul>';
         //status += '<br />Players: ' + data.players;
         document.getElementById('status').innerHTML = status;
-        updateDirectionHints();
     });
 
     socket.on('serverMSG', function (data) {
