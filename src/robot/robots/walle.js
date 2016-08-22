@@ -7,7 +7,7 @@ var dims;
 
 module.exports = {
     // The robots name
-    name: 'Lucy',
+    name: 'wallE',
 
     // This function is called just once and it provides the board size
     game_setup: function(data) {
