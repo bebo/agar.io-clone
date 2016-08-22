@@ -34,16 +34,38 @@ module.exports = {
         });
 
         socket.on('gameSetup', function(data) {
-            console.log('gamesetup', data);
+            if (isFunction(controller.game_setup)) {
+                controller.game_setup(data);
+            }
         });
 
         socket.on('serverTellPlayerMove', function (userData, foodsList, massList, virusList) {
-            var move = controller.step(userData, foodsList, massList, virusList);
-            console.log('[INFO] Robot name move:', move);
+            var playerData;
+            var data;
+            var enemyData = [];
 
-            if (move && move.x && move.y) {
+            // get player data from all users
+            for (var i = 0; i < userData.length; i++) {
+                data = userData[i];
+
+                if (typeof(data.id) == "undefined") {
+                    playerData = data;
+                    userData.splice(i, 1);
+                } else if (!data.waitingRespawn) {
+                    // players waiting to respawn should be invisible to
+                    // robots
+                    enemyData.push(data);
+                }
+
+            }
+
+            var move = controller.step(playerData, enemyData, foodsList, massList, virusList);
+
+            if (move && !isNaN(move.x) && !isNaN(move.y)) {
                 socket.emit('0', move);
-            } else if (move && move == 'split') {
+            } else if (move === 'fire-food') {
+                socket.emit('1');
+            } else if (move === 'split') {
                 socket.emit('2');
             } else {
                 console.log('[WARN] Robot name, invalid move:', move);
@@ -51,8 +73,9 @@ module.exports = {
         });
 
         socket.on('leaderboard', function (data) {
-            leaderboard = data.leaderboard;
-            console.log('leaderboard', leaderboard);
+            if (isFunction(controller.leaderboard)) {
+                controller.leaderboard(data.leaderboard);
+            }
         });
 
         // Death.
@@ -65,8 +88,7 @@ module.exports = {
         });
 
         socket.on('virusSplit', function (virusCell) {
-            //socket.emit('2', virusCell);
-            console.log('virusSplit');
+            socket.emit('2', virusCell);
         });
 
         socket.on('disconnect', function () {
@@ -75,17 +97,17 @@ module.exports = {
         });
 
         socket.on('playerDied', function (data) {
-            var name = (data.name.length < 1 ? 'An unnamed cell' : data.name);
+            var name = data.name || 'An unnamed cell';
             console.log('{GAME} - <b>' + name + '</b> was eaten.');
         });
 
         socket.on('playerDisconnect', function (data) {
-            var name = (data.name.length < 1 ? 'An unnamed cell' : data.name);
+            var name = data.name || 'An unnamed cell';
             console.log('{GAME} - <b>' + name + '</b> disconnected.');
         });
 
         socket.on('playerJoin', function (data) {
-            var name = (data.name.length < 1 ? 'An unnamed cell' : data.name);
+            var name = data.name || 'An unnamed cell';
             console.log('{GAME} - <b>' + name + '</b> joined.');
         });
 
@@ -93,6 +115,9 @@ module.exports = {
 
         return socket;
     }
-
-
 };
+
+function isFunction(functionToCheck) {
+    var getType = {};
+    return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+}
