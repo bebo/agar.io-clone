@@ -25,7 +25,7 @@ function startGame(type) {
         Bebo.sendInvite({title: "{{{user.username}}}", body:"is playing agar"});
     }
     global.playerType = type;
-    global.toggleMassState = 1;
+    global.toggleMassState = 0;
 
     global.screenWidth = window.innerWidth;
     global.screenHeight = window.innerHeight;
@@ -273,12 +273,12 @@ function setupSocket(socket) {
             status += '<li id="lb_' + leaderboard[i].id + '"><div class="dir">' + getDirectionHint(leaderboard[i]) + '</div>';
             if (leaderboard[i].id == player.id){
                 if(leaderboard[i].name.length !== 0)
-                    status += '<span class="me">' + leaderboard[i].name + "</span>";
+                    status += '<span class="me">' + leaderboard[i].name + "</span> (" + player.massTotal + ")";
                 else
                     status += '<span class="me">' + "An unnamed cell</span>";
             } else {
                 if(leaderboard[i].name.length !== 0)
-                    status += '<span ">' + leaderboard[i].name + "</span>";
+                    status += '<span ">' + leaderboard[i].name + "</span> (" + leaderboard[i].massTotal + ")";
                 else
                     status += 'An unnamed cell';
             }

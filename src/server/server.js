@@ -616,6 +616,7 @@ function gameloop() {
                 topUsers.push({
                     id: users[i].id,
                     name: users[i].name,
+                    massTotal: Math.floor(users[i].massTotal),
                     x: users[i].x,
                     y: users[i].y
                 });
