@@ -50,6 +50,7 @@ div {
     right: 10px;
     font-weight: bold;
     text-align: left;
+    pointer-events: none;
 }
 
 #status ul {
