@@ -502,11 +502,11 @@ function tickPlayer(currentPlayer) {
     }
 
     function collisionCheck(collision) {
-        console.log('[DEBUG] Collision info:');
-        console.log(collision);
+        // console.log('[DEBUG] Collision info:');
+        // console.log(collision);
         // if (collision.aUser.mass > collision.bUser.mass * 1.1  && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2))*1.75) {
         if (collision.aUser.mass > collision.bUser.mass * 1.1  && collision.aUser.radius > Math.sqrt(Math.pow(collision.aUser.x - collision.bUser.x, 2) + Math.pow(collision.aUser.y - collision.bUser.y, 2))) {
-            console.log('[DEBUG] Killing user: ' + collision.bUser.id);
+            // console.log('[DEBUG] Killing user: ' + collision.bUser.id);
             // console.log('[DEBUG] Collision info:');
             // console.log(collision);
 
@@ -612,7 +612,8 @@ function gameloop() {
         var topUsers = [];
 
         for (var i = 0; i < Math.min(10, users.length); i++) {
-            if(users[i].type == 'player') {
+            // TODO this is somewhat broken ^
+            if(users[i].type == 'player' && users[i].name) {
                 topUsers.push({
                     id: users[i].id,
                     name: users[i].name,
