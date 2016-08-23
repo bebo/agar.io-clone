@@ -1,3 +1,6 @@
+var botnames = new Set();
+var humans = 0;
+const MIN_HUMANS = 2;
 module.exports = {
 
     new: function(controller, server, width, height) {
@@ -9,8 +12,10 @@ module.exports = {
         var global = {
             'name': name,
             'width': width,
-            'height': height
+            'height': height,
+            'state': "new"
         };
+        botnames.add(name);
 
         var socket = require("socket.io-client")(server, {query:"type=player"});
 
@@ -59,6 +64,10 @@ module.exports = {
 
             }
 
+            if (!playerData) {
+                return;
+            }
+
             var move = controller.step(playerData, enemyData, foodsList, massList, virusList);
 
             if (move && !isNaN(move.x) && !isNaN(move.y)) {
@@ -72,17 +81,42 @@ module.exports = {
             }
         });
 
+        function respawn() {
+            global.state = "respawning";
+            setTimeout(function() {
+                 socket.emit('respawn');
+            }, 1000, Math.random() * 4000);
+        }
+
         socket.on('leaderboard', function (data) {
             if (isFunction(controller.leaderboard)) {
                 controller.leaderboard(data.leaderboard);
+            }
+
+            var h = 0;
+            for(var i=0; i < data.leaderboard.length ; i++ ) {
+                if (!botnames.has(data.leaderboard[i].name)) {
+                    h++;
+                }
+            }
+            humans = h;
+            // console.log("humans", humans);
+            if (h < MIN_HUMANS && global.state === "rip") {
+                respawn();
             }
         });
 
         // Death.
         socket.on('RIP', function () {
             console.log('you are dead');
+            global.state = "rip";
+
+            // console.log("humans", humans);
+            if (humans < MIN_HUMANS) {
+                respawn();
+            }
+
             // restart
-            socket.emit('respawn');
         });
 
         socket.on('kick', function (data) {
