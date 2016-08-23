@@ -55,6 +55,9 @@ exports.uniformPosition = function(points, radius) {
         candidate.radius = radius;
 
         for (var pi = 0; pi < points.length; pi++) {
+            if (! points[pi]) {
+                continue; // TODO figure out why we have undefined elements in here
+            }
             var distance = exports.getDistance(candidate, points[pi]);
             if (distance < minDistance) {
                 minDistance = distance;
