@@ -22,7 +22,11 @@ function startGame(type) {
     // global.playerName = "";
     if (firstGame) {
         firstGame = false;
-        Bebo.sendInvite({title: "{{{user.username}}}", body:"is playing agar"});
+        Bebo.User.getUser("me", function(err, u) {
+            Bebo.Notification.roster("{{{user.username}}}",
+                                     "is playing agar",
+                                     {rate_limit_key: "agar:" + u.user_id + Math.random()});
+        });
     }
     global.playerType = type;
     global.toggleMassState = 0;
@@ -58,6 +62,7 @@ $(document).ready(function() {
         Bebo.User.getUser("me", function(err, u) {
             console.log("me", err, u);
             global.playerName = u.username;
+            global.user = u;
         });
     });
     var btn = document.getElementById('startButton'),
@@ -248,6 +253,10 @@ function setupSocket(socket) {
     });
 
     socket.on('playerJoin', function (data) {
+        if (!data || !data.name) {
+            console.log("Unexpected playerJoin payload", data);
+            return;
+        }
         window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> joined.');
     });
 
