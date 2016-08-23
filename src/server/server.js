@@ -85,7 +85,7 @@ function movePlayer(player) {
         var dist = Math.sqrt(Math.pow(target.y, 2) + Math.pow(target.x, 2));
         var deg = Math.atan2(target.y, target.x);
         var slowDown = 1;
-        if(player.cells[i].speed <= 6.25) {
+        if (player.cells[i].speed <= 6.25) {
             slowDown = util.log(player.cells[i].mass, c.slowBase) - initMassLog + 1;
         }
 
