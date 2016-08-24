@@ -335,16 +335,16 @@ function setupSocket(socket) {
             var max_x = 0, min_x = global.gameWidth;
             for (var j=0; j < player.cells.length ; j++) {
                 var cell = player.cells[j];
-                max_x = Math.max(cell.x + cell.radius * 1.3, max_x);
-                min_x = Math.min(cell.x - cell.radius * 1.3, min_x);
+                max_x = Math.max(cell.x + cell.radius, max_x);
+                min_x = Math.min(cell.x - cell.radius, min_x);
             }
-            var new_zoom = Math.min(global.screenWidth / (max_x - min_x), 1);
-            if (new_zoom !== zoom) {
+            var new_zoom = Math.min(global.screenWidth / (1.6 * (max_x - min_x)), 1);
+            if (new_zoom !== zoom && (Math.abs(zoom-new_zoom)/zoom) > 0.02 ) {
+                zoom = new_zoom;
                 global.viewPortWidth = global.screenWidth / zoom;
                 global.viewPortHeight = global.screenHeight / zoom;
                 resize();
             }
-
         }
         users = userData;
         foods = foodsList;
@@ -632,7 +632,7 @@ function fps() {
     fps_cnt = (fps_cnt +1) % fps_sample_size;
     if (fps_cnt === 0) {
         global.fps = Math.round(10000 * fps_sample_size / fps_sample)/10;
-        console.log("FPS", global.fps, slow_cnt , fps_sample_size, fps_sample, "/30");
+        // console.log("FPS", global.fps, slow_cnt , fps_sample_size, fps_sample, "/30");
         fps_sample = 0;
         slow_cnt = 0;
     }
