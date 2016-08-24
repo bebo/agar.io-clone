@@ -168,6 +168,7 @@ var users = [];
 var leaderboard = [];
 var target = {x: player.x, y: player.y};
 global.target = target;
+var zoom = 1;
 
 window.canvas = new Canvas();
 window.chat = new ChatClient();
@@ -329,6 +330,19 @@ function setupSocket(socket) {
             player.cells = playerData.cells;
             player.xoffset = isNaN(xoffset) ? 0 : xoffset;
             player.yoffset = isNaN(yoffset) ? 0 : yoffset;
+
+            var max_x = 0, min_x = global.gameWidth;
+            for (var j=0; j < player.cells.length ; j++) {
+                var cell = player.cells[j];
+                max_x = Math.max(cell.x + cell.radius * 1.3, max_x);
+                min_x = Math.min(cell.x - cell.radius * 1.3, min_x);
+            }
+            //TODO animate
+            zoom = Math.min(global.screenWidth / (max_x - min_x), 1);
+            global.viewPortWidth = global.screenWidth / zoom;
+            global.viewPortHeight = global.screenHeight / zoom;
+            resize();
+
         }
         users = userData;
         foods = foodsList;
@@ -386,34 +400,34 @@ function drawCircle(centerX, centerY, radius, sides) {
 function drawFood(food) {
     graph.strokeStyle = 'hsl(' + food.hue + ', 100%, 45%)';
     graph.fillStyle = 'hsl(' + food.hue + ', 100%, 50%)';
-    graph.lineWidth = foodConfig.border;
-    drawCircle(food.x - player.x + global.screenWidth / 2,
-               food.y - player.y + global.screenHeight / 2,
-               food.radius, global.foodSides);
+    graph.lineWidth = foodConfig.border * zoom;
+    drawCircle(zoom * (food.x - player.x + global.viewPortWidth / 2),
+               zoom * (food.y - player.y + global.viewPortHeight / 2),
+               zoom * food.radius, global.foodSides);
 }
 
 function drawVirus(virus) {
     graph.strokeStyle = virus.stroke;
     graph.fillStyle = virus.fill;
-    graph.lineWidth = virus.strokeWidth;
-    drawCircle(virus.x - player.x + global.screenWidth / 2,
-               virus.y - player.y + global.screenHeight / 2,
-               virus.radius, global.virusSides);
+    graph.lineWidth = virus.strokeWidth * zoom;
+    drawCircle(zoom * (virus.x - player.x + global.viewPortWidth / 2),
+               zoom * (virus.y - player.y + global.viewPortHeight / 2),
+               zoom * virus.radius, global.virusSides);
 }
 
 function drawFireFood(mass) {
     graph.strokeStyle = 'hsl(' + mass.hue + ', 100%, 45%)';
     graph.fillStyle = 'hsl(' + mass.hue + ', 100%, 50%)';
-    graph.lineWidth = playerConfig.border+10;
-    drawCircle(mass.x - player.x + global.screenWidth / 2,
-               mass.y - player.y + global.screenHeight / 2,
-               mass.radius-5, 18 + (~~(mass.masa/5)));
+    graph.lineWidth = (playerConfig.border+10) * zoom;
+    drawCircle(zoom * (mass.x - player.x + global.viewPortWidth / 2),
+               zoom * (mass.y - player.y + global.viewPortHeight / 2),
+               zoom * (mass.radius-5), 18 + (~~(mass.masa/5)));
 }
 
 function drawPlayers(order) {
     var start = {
-        x: player.x - (global.screenWidth / 2),
-        y: player.y - (global.screenHeight / 2)
+        x: player.x - (global.screenWidth / (2 * zoom)),
+        y: player.y - (global.screenHeight / (2 * zoom))
     };
 
     for(var z=0; z<order.length; z++)
@@ -429,7 +443,7 @@ function drawPlayers(order) {
 
         graph.strokeStyle = 'hsl(' + userCurrent.hue + ', 100%, 45%)';
         graph.fillStyle = 'hsl(' + userCurrent.hue + ', 100%, 50%)';
-        graph.lineWidth = playerConfig.border;
+        graph.lineWidth = playerConfig.border * zoom;
 
         var xstore = [];
         var ystore = [];
@@ -447,14 +461,14 @@ function drawPlayers(order) {
             y = cellCurrent.radius * Math.sin(global.spin) + circle.y;
             if(typeof(userCurrent.id) == "undefined") {
                 x = valueInRange(-userCurrent.x + global.screenWidth / 2,
-                                 global.gameWidth - userCurrent.x + global.screenWidth / 2, x);
-                y = valueInRange(-userCurrent.y + global.screenHeight / 2,
-                                 global.gameHeight - userCurrent.y + global.screenHeight / 2, y);
+                                 global.gameWidth - userCurrent.x + global.viewPortWidth / 2, x);
+                y = valueInRange(-userCurrent.y + global.viewPortHeight / 2,
+                                 global.gameHeight - userCurrent.y + global.viewPortHeight / 2, y);
             } else {
-                x = valueInRange(-cellCurrent.x - player.x + global.screenWidth / 2 + (cellCurrent.radius/3),
-                                 global.gameWidth - cellCurrent.x + global.gameWidth - player.x + global.screenWidth / 2 - (cellCurrent.radius/3), x);
-                y = valueInRange(-cellCurrent.y - player.y + global.screenHeight / 2 + (cellCurrent.radius/3),
-                                 global.gameHeight - cellCurrent.y + global.gameHeight - player.y + global.screenHeight / 2 - (cellCurrent.radius/3) , y);
+                x = valueInRange(-cellCurrent.x - player.x + global.viewPortWidth / 2 + (cellCurrent.radius/3),
+                                 global.gameWidth - cellCurrent.x + global.gameWidth - player.x + global.viewPortWidth / 2 - (cellCurrent.radius/3), x);
+                y = valueInRange(-cellCurrent.y - player.y + global.viewPortHeight / 2 + (cellCurrent.radius/3),
+                                 global.gameHeight - cellCurrent.y + global.gameHeight - player.y + global.viewPortHeight / 2 - (cellCurrent.radius/3) , y);
             }
             global.spin += increase;
             xstore[i] = x;
@@ -467,12 +481,12 @@ function drawPlayers(order) {
         for (i = 0; i < points; ++i) {
             if (i === 0) {
                 graph.beginPath();
-                graph.moveTo(xstore[i], ystore[i]);
+                graph.moveTo(zoom * xstore[i], zoom * ystore[i]);
             } else if (i > 0 && i < points - 1) {
-                graph.lineTo(xstore[i], ystore[i]);
+                graph.lineTo(zoom * xstore[i], zoom * ystore[i]);
             } else {
-                graph.lineTo(xstore[i], ystore[i]);
-                graph.lineTo(xstore[0], ystore[0]);
+                graph.lineTo(zoom * xstore[i], zoom * ystore[i]);
+                graph.lineTo(zoom * xstore[0], zoom * ystore[0]);
             }
 
         }
@@ -487,25 +501,25 @@ function drawPlayers(order) {
             nameCell = userCurrent.name;
 
         var fontSize = Math.max(cellCurrent.radius / 3, 12);
-        graph.lineWidth = playerConfig.textBorderSize;
+        graph.lineWidth = playerConfig.textBorderSize * zoom;
         graph.fillStyle = playerConfig.textColor;
         graph.strokeStyle = playerConfig.textBorder;
         graph.miterLimit = 1;
         graph.lineJoin = 'round';
         graph.textAlign = 'center';
         graph.textBaseline = 'middle';
-        graph.font = 'bold ' + fontSize + 'px sans-serif';
+        graph.font = 'bold ' + fontSize * zoom + 'px sans-serif';
 
         if (global.toggleMassState === 0) {
-            graph.strokeText(nameCell, circle.x, circle.y);
-            graph.fillText(nameCell, circle.x, circle.y);
+            graph.strokeText(nameCell, zoom * circle.x, zoom * circle.y);
+            graph.fillText(nameCell, zoom * circle.x, zoom * circle.y);
         } else {
-            graph.strokeText(nameCell, circle.x, circle.y);
-            graph.fillText(nameCell, circle.x, circle.y);
-            graph.font = 'bold ' + Math.max(fontSize / 3 * 2, 10) + 'px sans-serif';
+            graph.strokeText(nameCell, zoom * circle.x, zoom * circle.y);
+            graph.fillText(nameCell, zoom * circle.x, zoom * circle.y);
+            graph.font = 'bold ' + zoom * Math.max(fontSize / 3 * 2, 10) + 'px sans-serif';
             if(nameCell.length === 0) fontSize = 0;
-            graph.strokeText(Math.round(cellCurrent.mass), circle.x, circle.y+fontSize);
-            graph.fillText(Math.round(cellCurrent.mass), circle.x, circle.y+fontSize);
+            graph.strokeText(Math.round(cellCurrent.mass), zoom * circle.x, zoom * (circle.y+fontSize));
+            graph.fillText(Math.round(cellCurrent.mass), zoom * circle.x, zoom * (circle.y+fontSize));
         }
     }
 }
@@ -515,17 +529,17 @@ function valueInRange(min, max, value) {
 }
 
 function drawgrid() {
-     graph.lineWidth = 1;
+     graph.lineWidth = 1 * zoom;
      graph.strokeStyle = global.lineColor;
      graph.globalAlpha = 0.15;
      graph.beginPath();
 
-    for (var x = global.xoffset - player.x; x < global.screenWidth; x += global.screenHeight / 18) {
+    for (var x = zoom * (global.xoffset - player.x); x < global.screenWidth ; x += zoom * global.screenHeight / 18 ) {
         graph.moveTo(x, 0);
         graph.lineTo(x, global.screenHeight);
     }
 
-    for (var y = global.yoffset - player.y ; y < global.screenHeight; y += global.screenHeight / 18) {
+    for (var y = zoom * (global.yoffset - player.y) ; y < global.screenHeight ; y += zoom * global.screenHeight / 18) {
         graph.moveTo(0, y);
         graph.lineTo(global.screenWidth, y);
     }
@@ -534,50 +548,50 @@ function drawgrid() {
     graph.globalAlpha = 1;
 }
 
-function drawborder() {
-    graph.lineWidth = 1;
-    graph.strokeStyle = playerConfig.borderColor;
+// function drawborder() {
+//     graph.lineWidth = 1 * zoom;
+//     graph.strokeStyle = playerConfig.borderColor;
 
-    // Left-vertical.
-    if (player.x <= global.screenWidth/2) {
-        graph.beginPath();
-        graph.moveTo(global.screenWidth/2 - player.x, 0 ? player.y > global.screenHeight/2 : global.screenHeight/2 - player.y);
-        graph.lineTo(global.screenWidth/2 - player.x, global.gameHeight + global.screenHeight/2 - player.y);
-        graph.strokeStyle = global.lineColor;
-        graph.stroke();
-    }
+//     // Left-vertical.
+//     if (player.x <= global.screenWidth/2) {
+//         graph.beginPath();
+//         graph.moveTo(zoom * (global.screenWidth/2 - player.x), 0 ? player.y > global.screenHeight/2 : global.screenHeight/2 - player.y);
+//         graph.lineTo(global.screenWidth/2 - player.x, global.gameHeight + global.screenHeight/2 - player.y);
+//         graph.strokeStyle = global.lineColor;
+//         graph.stroke();
+//     }
 
-    // Top-horizontal.
-    if (player.y <= global.screenHeight/2) {
-        graph.beginPath();
-        graph.moveTo(0 ? player.x > global.screenWidth/2 : global.screenWidth/2 - player.x, global.screenHeight/2 - player.y);
-        graph.lineTo(global.gameWidth + global.screenWidth/2 - player.x, global.screenHeight/2 - player.y);
-        graph.strokeStyle = global.lineColor;
-        graph.stroke();
-    }
+//     // Top-horizontal.
+//     if (player.y <= global.screenHeight/2) {
+//         graph.beginPath();
+//         graph.moveTo(0 ? player.x > global.screenWidth/2 : global.screenWidth/2 - player.x, global.screenHeight/2 - player.y);
+//         graph.lineTo(global.gameWidth + global.screenWidth/2 - player.x, global.screenHeight/2 - player.y);
+//         graph.strokeStyle = global.lineColor;
+//         graph.stroke();
+//     }
 
-    // Right-vertical.
-    if (global.gameWidth - player.x <= global.screenWidth/2) {
-        graph.beginPath();
-        graph.moveTo(global.gameWidth + global.screenWidth/2 - player.x,
-                     global.screenHeight/2 - player.y);
-        graph.lineTo(global.gameWidth + global.screenWidth/2 - player.x,
-                     global.gameHeight + global.screenHeight/2 - player.y);
-        graph.strokeStyle = global.lineColor;
-        graph.stroke();
-    }
+//     // Right-vertical.
+//     if (global.gameWidth - player.x <= global.screenWidth/2) {
+//         graph.beginPath();
+//         graph.moveTo(global.gameWidth + global.screenWidth/2 - player.x,
+//                      global.screenHeight/2 - player.y);
+//         graph.lineTo(global.gameWidth + global.screenWidth/2 - player.x,
+//                      global.gameHeight + global.screenHeight/2 - player.y);
+//         graph.strokeStyle = global.lineColor;
+//         graph.stroke();
+//     }
 
-    // Bottom-horizontal.
-    if (global.gameHeight - player.y <= global.screenHeight/2) {
-        graph.beginPath();
-        graph.moveTo(global.gameWidth + global.screenWidth/2 - player.x,
-                     global.gameHeight + global.screenHeight/2 - player.y);
-        graph.lineTo(global.screenWidth/2 - player.x,
-                     global.gameHeight + global.screenHeight/2 - player.y);
-        graph.strokeStyle = global.lineColor;
-        graph.stroke();
-    }
-}
+//     // Bottom-horizontal.
+//     if (global.gameHeight - player.y <= global.screenHeight/2) {
+//         graph.beginPath();
+//         graph.moveTo(global.gameWidth + global.screenWidth/2 - player.x,
+//                      global.gameHeight + global.screenHeight/2 - player.y);
+//         graph.lineTo(global.screenWidth/2 - player.x,
+//                      global.gameHeight + global.screenHeight/2 - player.y);
+//         graph.strokeStyle = global.lineColor;
+//         graph.stroke();
+//     }
+// }
 
 window.requestAnimFrame = (function() {
     return  window.requestAnimationFrame       ||
@@ -637,14 +651,13 @@ function gameLoop() {
         if (global.gameStart) {
             graph.fillStyle = global.backgroundColor;
             graph.fillRect(0, 0, global.screenWidth, global.screenHeight);
-
             drawgrid();
             foods.forEach(drawFood);
             fireFood.forEach(drawFireFood);
             viruses.forEach(drawVirus);
 
             if (global.borderDraw) {
-                drawborder();
+                // drawborder();
             }
             var orderMass = [];
             for(var i=0; i<users.length; i++) {
@@ -683,12 +696,10 @@ function gameLoop() {
             if (reason !== '') {
                 graph.fillText('You were kicked for:', global.screenWidth / 2, global.screenHeight / 2 - 20);
                 graph.fillText(reason, global.screenWidth / 2, global.screenHeight / 2 + 20);
-            }
-            else {
+            } else {
                 graph.fillText('You were kicked!', global.screenWidth / 2, global.screenHeight / 2);
             }
-        }
-        else {
+        } else {
               graph.fillText('Disconnected!', global.screenWidth / 2, global.screenHeight / 2);
         }
     }
@@ -705,5 +716,7 @@ function resize() {
         player.y = global.gameHeight / 2;
     }
 
-    socket.emit('windowResized', { screenWidth: global.screenWidth, screenHeight: global.screenHeight });
+    global.viewPortWidth = global.screenWidth / zoom;
+    global.viewPortHeight = global.screenHeight / zoom;
+    socket.emit('windowResized', { screenWidth: global.screenWidth / zoom, screenHeight: global.screenHeight /zoom });
 }
