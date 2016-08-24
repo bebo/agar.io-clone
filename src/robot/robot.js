@@ -1,9 +1,10 @@
 var botnames = new Set();
 var humans = 0;
 const MIN_HUMANS = 2;
+
 module.exports = {
 
-    new: function(controller, server, width, height) {
+    new: function(controller, server, width, height, exit_callback) {
 
         var name = controller.name || 'A robot has no name';
 
@@ -130,6 +131,7 @@ module.exports = {
         socket.on('disconnect', function () {
             socket.close();
             console.log('disconnected');
+            exit_callback(name);
         });
 
         socket.on('playerDied', function (data) {
@@ -139,12 +141,12 @@ module.exports = {
 
         socket.on('playerDisconnect', function (data) {
             var name = data.name || 'An unnamed cell';
-            console.log('{GAME} - <b>' + name + '</b> disconnected.');
+            // console.log('{GAME} - <b>' + name + '</b> disconnected.');
         });
 
         socket.on('playerJoin', function (data) {
             var name = data.name || 'An unnamed cell';
-            console.log('{GAME} - <b>' + name + '</b> joined.');
+            // console.log('{GAME} - <b>' + name + '</b> joined.');
         });
 
         socket.emit('respawn');

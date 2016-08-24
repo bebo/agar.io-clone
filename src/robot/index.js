@@ -11,7 +11,7 @@ var serverport = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || c.port
 var server = 'http://' + ipaddress + ':' + serverport;
 
 // store all robots playing
-var robots = [];
+var robots = {};
 
 var width = c.gameWidth / 4;
 var height = c.gameHeight / 4;
@@ -19,12 +19,17 @@ var height = c.gameHeight / 4;
 var robots_dir = path.resolve(__dirname, "./robots/*.js");
 var BaseBot = require('./robots/base.js');
 
-var names = ['Eve', 'Eve', 'Lucy', 'Shamus', 'Trex', 'mike', 'sonic', 'wallE', 'B.O.B.'];
+var names = ['Eve', 'Lucy', 'Shamus', 'Trex', 'mike', 'sonic', 'wallE', 'BOB'];
+
+function reconnect(name) {
+    var controller = BaseBot(name);
+    setTimeout(function () {
+        robots[name] = robot.new(controller, server, width, height, reconnect);
+    }, 1000);
+}
+
 
 names.forEach(function(name) {
     var controller = BaseBot(name);
-    robots.push({
-        'module': robot,
-        'socket': robot.new(controller, server, width, height)
-    });
+    robots[name] = robot.new(controller, server, width, height, reconnect);
 });
