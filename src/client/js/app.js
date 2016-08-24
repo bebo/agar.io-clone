@@ -403,6 +403,39 @@ function drawCircle(centerX, centerY, radius, sides) {
     graph.fill();
 }
 
+function drawVirusCircle(virus, centerX, centerY, radius, sides) {
+    
+    var theta = 0;
+    var x = 0;
+    var y = 0;
+    sides = sides * 4;
+    var inner_radius = radius * 0.9 - 5;
+
+    graph.beginPath();
+
+    if (virus.rotate === undefined) {
+        virus.rotate = 0.1 * Math.PI;
+    } else {
+        virus.rotate += 0.1 * Math.PI;
+    }
+
+    for (var i = 0; i < sides; i++) {
+        theta = (i / sides) * 2 * Math.PI + virus.rotate;
+        if (i % 4) {
+            x = centerX + inner_radius * Math.sin(theta);
+            y = centerY + inner_radius * Math.cos(theta);
+        } else {
+            x = centerX + radius * Math.sin(theta);
+            y = centerY + radius * Math.cos(theta);
+        }
+        graph.lineTo(x, y);
+    }
+
+    graph.closePath();
+    graph.stroke();
+    graph.fill();
+}
+
 function drawFood(food) {
     graph.strokeStyle = 'hsl(' + food[3] + ', 100%, 45%)';
     graph.fillStyle = 'hsl(' + food[3] + ', 100%, 50%)';
@@ -416,7 +449,8 @@ function drawVirus(virus) {
     graph.strokeStyle = virus.stroke;
     graph.fillStyle = virus.fill;
     graph.lineWidth = virus.strokeWidth * zoom;
-    drawCircle(zoom * (virus.x - player.x + global.viewPortWidth / 2),
+    drawVirusCircle(virus,
+               zoom * (virus.x - player.x + global.viewPortWidth / 2),
                zoom * (virus.y - player.y + global.viewPortHeight / 2),
                zoom * virus.radius, global.virusSides);
 }

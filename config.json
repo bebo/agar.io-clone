@@ -7,12 +7,12 @@
 	"virus": {
         "fill": "#33ff33",
         "stroke": "#19D119",
-            "strokeWidth": 20,
-            "defaultMass": {
-                "from": 100,
-                "to": 150
-            },
-            "splitMass": 180
+        "strokeWidth": 7,
+        "defaultMass": {
+            "from": 75,
+            "to": 150
+        },
+        "splitMass": 180
 	},
     "gameWidth": 3000,
     "gameHeight": 3000,
