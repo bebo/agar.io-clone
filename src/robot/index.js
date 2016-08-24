@@ -17,9 +17,12 @@ var width = c.gameWidth / 4;
 var height = c.gameHeight / 4;
 
 var robots_dir = path.resolve(__dirname, "./robots/*.js");
+var BaseBot = require('./robots/base.js');
 
-glob.sync(robots_dir).forEach(function(file) {
-    var controller = require(file);
+var names = ['Eve', 'Eve', 'Lucy', 'Shamus', 'Trex', 'mike', 'sonic', 'wallE', 'B.O.B.'];
+
+names.forEach(function(name) {
+    var controller = BaseBot(name);
     robots.push({
         'module': robot,
         'socket': robot.new(controller, server, width, height)

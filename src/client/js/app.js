@@ -167,6 +167,7 @@ var fireFood = [];
 var users = [];
 var leaderboard = [];
 var target = {x: player.x, y: player.y};
+var last_target = {};
 global.target = target;
 var zoom = 1;
 
@@ -337,15 +338,20 @@ function setupSocket(socket) {
                 max_x = Math.max(cell.x + cell.radius * 1.3, max_x);
                 min_x = Math.min(cell.x - cell.radius * 1.3, min_x);
             }
-            //TODO animate
-            zoom = Math.min(global.screenWidth / (max_x - min_x), 1);
-            global.viewPortWidth = global.screenWidth / zoom;
-            global.viewPortHeight = global.screenHeight / zoom;
-            resize();
+            var new_zoom = Math.min(global.screenWidth / (max_x - min_x), 1);
+            if (new_zoom !== zoom) {
+                global.viewPortWidth = global.screenWidth / zoom;
+                global.viewPortHeight = global.screenHeight / zoom;
+                resize();
+            }
 
         }
         users = userData;
         foods = foodsList;
+        var l = foods.length;
+        for(var fi=0 ; fi < l; fi++) {
+            foods[fi].push((foods[fi][2]-10) * 360); // hue
+        }
         viruses = virusList;
         fireFood = massList;
     });
@@ -398,12 +404,12 @@ function drawCircle(centerX, centerY, radius, sides) {
 }
 
 function drawFood(food) {
-    graph.strokeStyle = 'hsl(' + food.hue + ', 100%, 45%)';
-    graph.fillStyle = 'hsl(' + food.hue + ', 100%, 50%)';
+    graph.strokeStyle = 'hsl(' + food[3] + ', 100%, 45%)';
+    graph.fillStyle = 'hsl(' + food[3] + ', 100%, 50%)';
     graph.lineWidth = foodConfig.border * zoom;
-    drawCircle(zoom * (food.x - player.x + global.viewPortWidth / 2),
-               zoom * (food.y - player.y + global.viewPortHeight / 2),
-               zoom * food.radius, global.foodSides);
+    drawCircle(zoom * (food[0] - player.x + global.viewPortWidth / 2),
+               zoom * (food[1] - player.y + global.viewPortHeight / 2),
+               zoom * food[2], global.foodSides);
 }
 
 function drawVirus(virus) {
@@ -613,6 +619,8 @@ var fps_cnt = 0;
 var fps_last = Date.now();
 var fps_sample_size = 30;
 var slow_cnt = 0;
+var tick = 0;
+var last_heartbeat = 0;
 
 function fps() {
     var now = Date.now();
@@ -638,6 +646,7 @@ function animloop() {
 }
 
 function gameLoop() {
+    tick ++;
     if (global.died) {
         graph.fillStyle = '#333333';
         graph.fillRect(0, 0, global.screenWidth, global.screenHeight);
@@ -674,7 +683,13 @@ function gameLoop() {
             });
 
             drawPlayers(orderMass);
-            socket.emit('0', window.canvas.target); // playerSendTarget "Heartbeat".
+            
+            if (window.canvas.target.x !== last_target.x || window.canvas.target.y !== last_target.y || (tick - last_heartbeat) > 60) {
+                last_target.y = window.canvas.target.y;
+                last_target.x = window.canvas.target.x;
+                last_heartbeat = tick;
+                socket.emit('0', window.canvas.target); // playerSendTarget "Heartbeat".
+            }
 
         } else {
             graph.fillStyle = '#333333';

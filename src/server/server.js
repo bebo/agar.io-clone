@@ -40,12 +40,11 @@ function addFood(toAdd) {
         var position = c.foodUniformDisposition ? util.uniformPosition(food, radius) : util.randomPosition(radius);
         food.push({
             // Make IDs unique.
-            id: ((new Date()).getTime() + '' + food.length) >>> 0,
+            // id: ((new Date()).getTime() + '' + food.length) >>> 0,
             x: position.x,
             y: position.y,
-            radius: radius,
-            mass: Math.random() + 2,
-            hue: Math.round(Math.random() * 360)
+            radius: radius + Math.round(100000 * Math.random())/100000
+            // hue: Math.round(Math.random() * 360)
         });
     }
 }
@@ -661,10 +660,10 @@ function sendUpdates() {
                     f.x < u.x + u.screenWidth/2 + 20 &&
                     f.y > u.y - u.screenHeight/2 - 20 &&
                     f.y < u.y + u.screenHeight/2 + 20) {
-                    return f;
+                    return [f.x, f.y, f.radius];
                 }
             })
-            .filter(function(f) { return f; });
+            .filter(function(f) { return f; }); // TODO why?
 
         var visibleVirus  = virus
             .map(function(f) {
