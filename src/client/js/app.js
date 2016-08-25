@@ -413,14 +413,13 @@ function drawVirusCircle(virus, centerX, centerY, radius, sides) {
 
     graph.beginPath();
 
-    if (virus.rotate === undefined) {
-        virus.rotate = 0.1 * Math.PI;
-    } else {
-        virus.rotate += 0.1 * Math.PI;
+    var rotate = (tick * 3 + (player.x + player.y) / 100) / 348 ;
+    if (virus.mass % 2) {
+        rotate = rotate * -1;
     }
 
     for (var i = 0; i < sides; i++) {
-        theta = (i / sides) * 2 * Math.PI + virus.rotate;
+        theta = (i / sides) * 2 * Math.PI + rotate;
         if (i % 4) {
             x = centerX + inner_radius * Math.sin(theta);
             y = centerY + inner_radius * Math.cos(theta);
