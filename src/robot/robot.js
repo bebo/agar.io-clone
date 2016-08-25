@@ -1,6 +1,15 @@
 var botnames = new Set();
-var humans = 0;
-const MIN_HUMANS = 2;
+var humans = new Set();
+var bots = new Set();
+const MIN_PLAYERS = 8;
+var _ = require('lodash');
+
+var timers = {};
+setInterval(function() {
+    _.values(timers).forEach(function(t) {
+        t();
+    });
+}, 1000);
 
 module.exports = {
 
@@ -18,10 +27,19 @@ module.exports = {
         };
         botnames.add(name);
 
+        function checkRespawn() {
+            if (global.state === "rip" && (bots.size + humans.size) < MIN_PLAYERS ) {
+                if ((MIN_PLAYERS - bots.size - humans.size) / MIN_PLAYERS > Math.random()) {
+                    respawn();
+                }
+            }
+        }
+        timers[name] = checkRespawn;
+
         var socket = require("socket.io-client")(server, {query:"type=player"});
 
         socket.on('connect', function() {
-            console.log('Connected');
+            console.log(name, 'Connected');
         });
 
         socket.on('welcome', function (robotSettings) {
@@ -36,7 +54,7 @@ module.exports = {
         // Handle error.
         socket.on('connect_failed', function () {
             socket.close();
-            console.log('connection failed');
+            console.log(name, 'connection failed');
         });
 
         socket.on('gameSetup', function(data) {
@@ -62,7 +80,6 @@ module.exports = {
                     // robots
                     enemyData.push(data);
                 }
-
             }
 
             if (!playerData) {
@@ -82,7 +99,11 @@ module.exports = {
             }
         });
 
+
+
+
         function respawn() {
+            console.log(name, "respawning");
             global.state = "respawning";
             setTimeout(function() {
                  socket.emit('respawn');
@@ -94,34 +115,26 @@ module.exports = {
                 controller.leaderboard(data.leaderboard);
             }
 
-            var h = 0;
+            bots.clear();
+            humans.clear();
             for(var i=0; i < data.leaderboard.length ; i++ ) {
                 if (!botnames.has(data.leaderboard[i].name)) {
-                    h++;
+                    humans.add(data.leaderboard[i].name);
+                } else {
+                    bots.add(data.leaderboard[i].name);
                 }
-            }
-            humans = h;
-            // console.log("humans", humans);
-            if (h < MIN_HUMANS && global.state === "rip") {
-                respawn();
             }
         });
 
         // Death.
         socket.on('RIP', function () {
-            console.log('you are dead');
+            console.log(name, 'you are dead');
             global.state = "rip";
-
-            // console.log("humans", humans);
-            if (humans < MIN_HUMANS) {
-                respawn();
-            }
-
-            // restart
+            bots.delete(name);
         });
 
         socket.on('kick', function (data) {
-            console.log('you got kicked from the game:', data);
+            console.log(name, 'you got kicked from the game:', data);
         });
 
         socket.on('virusSplit', function (virusCell) {
@@ -130,13 +143,15 @@ module.exports = {
 
         socket.on('disconnect', function () {
             socket.close();
-            console.log('disconnected');
+            console.log(name, 'disconnected');
             exit_callback(name);
         });
 
         socket.on('playerDied', function (data) {
             var name = data.name || 'An unnamed cell';
-            console.log('{GAME} - <b>' + name + '</b> was eaten.');
+            // console.log(global.name, '{GAME} - <b>' + name + '</b> was eaten.');
+            bots.delete(name);
+            humans.delete(name);
         });
 
         socket.on('playerDisconnect', function (data) {
