@@ -649,6 +649,7 @@ function gameloop() {
 }
 
 function sendUpdates() {
+
     users.forEach( function(u) {
         // center the view if x/y is undefined, this will happen for spectators
         u.x = u.x || c.gameWidth / 2;
@@ -666,6 +667,7 @@ function sendUpdates() {
             .filter(function(f) { return f; });
 
         if (visibleFood.length > 64) {
+
             if (u.skipFood === undefined) {
                 u.skipFood = 1;
             } else {
@@ -675,6 +677,7 @@ function sendUpdates() {
                     visibleFood = null;
                 }
             }
+
         } else {
             delete u.skipFood;
         }

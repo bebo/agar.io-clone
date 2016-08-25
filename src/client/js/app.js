@@ -63,31 +63,31 @@ $(document).ready(function() {
             console.log("me", err, u);
             global.playerName = u.username;
             global.user = u;
+
+            var btn = document.getElementById('startButton'),
+                // btnS = document.getElementById('spectateButton'),
+            nickErrorText = document.querySelector('#startMenu .input-error');
+
+            // btnS.onclick = function () {
+            //     startGame('spectate');
+            // };
+
+            btn.onclick = function () {
+
+                // Checks if the nick is valid.
+                // if (validNick()) {
+                //     nickErrorText.style.opacity = 0;
+                startGame('player');
+                // } else {
+                //     nickErrorText.style.opacity = 1;
+                // }
+            };
+
+            // var settingsMenu = document.getElementById('settingsButton');
+            // var settings = document.getElementById('settings');
+            var instructions = document.getElementById('instructions');
         });
     });
-    var btn = document.getElementById('startButton'),
-        // btnS = document.getElementById('spectateButton'),
-        nickErrorText = document.querySelector('#startMenu .input-error');
-
-    // btnS.onclick = function () {
-    //     startGame('spectate');
-    // };
-
-    btn.onclick = function () {
-
-        // Checks if the nick is valid.
-        // if (validNick()) {
-        //     nickErrorText.style.opacity = 0;
-        startGame('player');
-        // } else {
-        //     nickErrorText.style.opacity = 1;
-        // }
-    };
-
-    // var settingsMenu = document.getElementById('settingsButton');
-    // var settings = document.getElementById('settings');
-    var instructions = document.getElementById('instructions');
-
 });
 
 // window.onload = function() {
