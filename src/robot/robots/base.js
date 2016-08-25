@@ -43,8 +43,8 @@ module.exports = function Bot (name) {
                 // go and get it, tiger!
                 // vSourceToDestination = vDestination - vSource;
                 // multiplication makes sure we are going as fast as possible.
-                target_position.x = (target_food[0] - biggest_cell.x) * 50;
-                target_position.y = (target_food[1] - biggest_cell.y) * 50;
+                target_position.x = (target_food[0] - biggest_cell[0]) * 50;
+                target_position.y = (target_food[1] - biggest_cell[1]) * 50;
                 return target_position;
             }
         },
@@ -60,13 +60,13 @@ module.exports = function Bot (name) {
         var limit = 250;
 
         // set direction based on current position and borders
-        if (my_position.x < limit && my_position.y > limit) {
+        if (my_position[0] < limit && my_position[1] > limit) {
             wanderer_direction = 'UP';
-        } else if (my_position.y < limit && dims.width - my_position.x > limit) {
+        } else if (my_position[1] < limit && dims.width - my_position[0] > limit) {
             wanderer_direction = 'RIGHT';
-        } else if (dims.width - my_position.x < limit && dims.height - my_position.y > limit) {
+        } else if (dims.width - my_position[0] < limit && dims.height - my_position[1] > limit) {
             wanderer_direction = 'DOWN';
-        } else if (dims.height - my_position.y < limit) {
+        } else if (dims.height - my_position[1] < limit) {
             wanderer_direction = 'LEFT';
         }
 
@@ -124,12 +124,12 @@ module.exports = function Bot (name) {
     // return the cell the contains more mass
     function get_my_biggest_cell(userData) {
         // sort descending
-        userData.sort(function(a, b) { return b.mass - a.mass; });
+        userData.sort(function(a, b) { return b[2] - a[2]; });
         return userData[0];
     }
 
     function calc_distance(a, food) {
-        return Math.pow(a.x - food[0], 2) + Math.pow(a.y - food[1], 2);
+        return Math.pow(a[0] - food[0], 2) + Math.pow(a[1] - food[1], 2);
     }
 
     return Bot;

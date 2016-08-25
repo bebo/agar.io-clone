@@ -663,7 +663,21 @@ function sendUpdates() {
                     return [f.x, f.y, f.radius];
                 }
             })
-            .filter(function(f) { return f; }); // TODO why?
+            .filter(function(f) { return f; });
+
+        if (visibleFood.length > 64) {
+            if (u.skipFood === undefined) {
+                u.skipFood = 1;
+            } else {
+                var skipFactor = Math.min(8, 2 + 1 * Math.floor(visibleFood.length/100));
+                u.skipFood++;
+                if (u.skipFood % skipFactor) {
+                    visibleFood = null;
+                }
+            }
+        } else {
+            delete u.skipFood;
+        }
 
         var visibleVirus  = virus
             .map(function(f) {
@@ -689,34 +703,38 @@ function sendUpdates() {
 
         var visibleCells  = users
             .map(function(f) {
+                var visible = [];
                 for(var z=0; z<f.cells.length; z++)
                 {
-                    if ( f.cells[z].x+f.cells[z].radius > u.x - u.screenWidth/2 - 20 &&
-                        f.cells[z].x-f.cells[z].radius < u.x + u.screenWidth/2 + 20 &&
-                        f.cells[z].y+f.cells[z].radius > u.y - u.screenHeight/2 - 20 &&
-                        f.cells[z].y-f.cells[z].radius < u.y + u.screenHeight/2 + 20) {
-                        z = f.cells.lenth;
-                        if(f.id !== u.id) {
-                            return {
-                                id: f.id,
-                                x: f.x,
-                                y: f.y,
-                                cells: f.cells,
-                                massTotal: Math.round(f.massTotal),
-                                hue: f.hue,
-                                name: f.name
-                            };
-                        } else {
-                            //console.log("Nombre: " + f.name + " Es Usuario");
-                            return {
-                                x: f.x,
-                                y: f.y,
-                                cells: f.cells,
-                                massTotal: Math.round(f.massTotal),
-                                hue: f.hue,
-                            };
-                        }
+                    var cell = f.cells[z];
+                    if (cell.x+cell.radius > u.x - u.screenWidth/2 - 20 &&
+                        cell.x-cell.radius < u.x + u.screenWidth/2 + 20 &&
+                        cell.y+cell.radius > u.y - u.screenHeight/2 - 20 &&
+                        cell.y-cell.radius < u.y + u.screenHeight/2 + 20) {
+                        visible.push([Math.round(cell.x), Math.round(cell.y), Math.round(cell.radius)]); 
                     }
+                }
+                if (visible.length === 0) {
+                    return;
+                } else if (f.id !== u.id) {
+                    return {
+                        id: f.id,
+                        x: Math.round(f.x),
+                        y: Math.round(f.y),
+                        cells: visible,
+                        massTotal: Math.round(f.massTotal),
+                        hue: f.hue,
+                        name: f.name
+                    };
+                } else {
+                    //console.log("Nombre: " + f.name + " Es Usuario");
+                    return {
+                        x: Math.round(f.x),
+                        y: Math.round(f.y),
+                        cells: visible,
+                        massTotal: Math.round(f.massTotal),
+                        hue: f.hue,
+                    };
                 }
             })
             .filter(function(f) { return f; });
@@ -734,7 +752,7 @@ function sendUpdates() {
 
 setInterval(moveloop, 1000 / 60);
 setInterval(gameloop, 1000);
-setInterval(sendUpdates, 1000 / c.networkUpdateFactor);
+setInterval(sendUpdates, c.networkUpdateMs);
 
 // Don't touch, IP configurations.
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || '127.0.0.1';

@@ -68,6 +68,10 @@ module.exports = {
             var data;
             var enemyData = [];
 
+            // if (! foodsList) {
+            //     foodsList = global.foodsList;
+            // }
+
             // get player data from all users
             for (var i = 0; i < userData.length; i++) {
                 data = userData[i];
@@ -86,7 +90,10 @@ module.exports = {
                 return;
             }
 
-            var move = controller.step(playerData, enemyData, foodsList, massList, virusList);
+            var move;
+            if (foodsList) {
+               move = controller.step(playerData, enemyData, foodsList, massList, virusList);
+            }
 
             if (move && !isNaN(move.x) && !isNaN(move.y)) {
                 socket.emit('0', move);
@@ -94,7 +101,7 @@ module.exports = {
                 socket.emit('1');
             } else if (move === 'split') {
                 socket.emit('2');
-            } else {
+            } else if (move !== undefined) {
                 console.log('[WARN] Robot name, invalid move:', move);
             }
         });
