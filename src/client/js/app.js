@@ -56,9 +56,27 @@ function validNick() {
     return regex.exec(playerNameInput.value) !== null;
 }
 
+
+var mute = true;
+function setAudio(checkbox) {
+    console.log("muteAudio", checkbox.checked);
+    if (checkbox.checked && mute === false) {
+        mute = true;
+        Bebo.hangup(false, true);
+    } else if (mute === true) {
+        mute = false;
+        Bebo.callin({video: false});
+    }
+}
+
 $(document).ready(function() {
     Bebo.onReady(function(){
         console.log("ready");
+        var muteAudio = document.getElementById('muteAudio');
+        muteAudio.onchange = function(e) {
+            setAudio(muteAudio);
+        };
+        setAudio(muteAudio);
         Bebo.User.getUser("me", function(err, u) {
             console.log("me", err, u);
             global.playerName = u.username;
@@ -173,6 +191,7 @@ var zoom = 1;
 
 window.canvas = new Canvas();
 window.chat = new ChatClient();
+
 
 var visibleBorderSetting = document.getElementById('visBord');
 visibleBorderSetting.onchange = settings.toggleBorder;
