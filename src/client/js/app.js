@@ -300,10 +300,10 @@ function setupSocket(socket) {
         leaderboard = data.leaderboard;
         var status = "<ul>";
         for (var i = 0; i < leaderboard.length; i++) {
-            status += '<li id="lb_' + leaderboard[i].id + '"><div class="dir">' + getDirectionHint(leaderboard[i]) + '</div>';
+            status += '<li id="lb_' + leaderboard[i].id + '"><div class="dir">↘&#xfe0e;' + getDirectionHint(leaderboard[i]) + '</div>';
             if (leaderboard[i].id == player.id){
                 if(leaderboard[i].name.length !== 0)
-                    status += '<span class="me">' + leaderboard[i].name + "</span> (" + player.massTotal + ")";
+                    status += '<span class="me">' + '<span class="mass">' + player.massTotal + '</span>' + leaderboard[i].name + "</span>";
                 else
                     status += '<span class="me">' + "An unnamed cell</span>";
             } else {

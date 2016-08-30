@@ -26,12 +26,6 @@ div {
     opacity: 0;
 }
 
-@media only screen  and (min-width : 1224px) {
-#mobile {
-display: none;
-    }
-}
-
 /* //////////////////////////////////////////////////////////////////////////////////////////
 TYPEFACES */
 
@@ -168,24 +162,6 @@ SETTINGS */
 /* //////////////////////////////////////////////////////////////////////////////////////////
 LEADERBOARD */
 
-#split {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    width: 100px;
-    height: 100px;
-    padding: 5px;
-}
-
-#feed {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    width: 100px;
-    height: 100px;
-    padding: 5px;
-}
-
 #status {
     position: fixed;
     color: rgba(0, 0, 0, 0.4);
@@ -207,30 +183,25 @@ LEADERBOARD */
     width: 100%;
     flex-direction: row;
     margin: 0;
-    padding: 0;
+    padding: 2px 4px;
 }
 
 #status .dir {
-    font-family: 'Fira Sans', sans-serif;
-    flex: 0 0 auto;
-    width: 1em;
-    font-size: 0.8em;
-    line-height: 24px;
+    margin-right: 2px;
+    color: rgba(0, 0, 0, 0.4);
     font-weight: bold;
-    /* color: #FF8888; */
 }
 
-#status .title {
-    font-size: 25px;
+#status .mass {
+    margin-right: 2px;
+    color: rgba(0, 0, 0, 0.4);
 }
 
 #status span {
     flex: 1 1 auto;
-    line-height: 24px;
 }
 #status .me {
-    color: #FF8888;
-    font-size: 16.1px;
+    color: rgba(0, 0, 0, 0.4);
 }
 
 /* //////////////////////////////////////////////////////////////////////////////////////////
@@ -288,4 +259,31 @@ SYSTEM MESSAGES */
     border: none;
     border-top: 1px solid #DDD;
     outline: none;
+}
+
+/* //////////////////////////////////////////////////////////////////////////////////////////
+SYSTEM MESSAGES */
+
+#split {
+    position: absolute;
+    bottom: 100px;
+    right: 18px;
+    width: 80px;
+    height: 80px;
+    padding: 0;
+}
+
+#feed {
+    position: absolute;
+    bottom: 22px;
+    right: 66px;
+    width: 80px;
+    height: 80px;
+    padding: 0;
+}
+
+@media only screen  and (min-width : 1224px) {
+#mobile {
+display: none;
+    }
 }
