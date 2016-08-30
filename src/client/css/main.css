@@ -71,6 +71,7 @@ START MENU */
     font-size: 5em;
     text-align: center;
     margin: 0 auto 30px;
+    font-weight: 400;
 }
 
 #playerNameInput {
