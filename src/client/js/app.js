@@ -34,6 +34,7 @@ function startGame(type) {
     global.screenWidth = window.innerWidth;
     global.screenHeight = window.innerHeight;
 
+    document.getElementById('startMenuWrapper').style.opacity = 0;
     document.getElementById('startMenuWrapper').style.maxHeight = '0px';
     document.getElementById('gameAreaWrapper').style.opacity = 1;
     if (!socket) {
@@ -267,11 +268,11 @@ function setupSocket(socket) {
     });
 
     socket.on('playerDied', function (data) {
-        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> was eaten by <b>' + (data.by.length < 1 ? 'An unnamed cell' : data.by));
+        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> eaten by <b>' + (data.by.length < 1 ? 'An unnamed cell' : data.by));
     });
 
     socket.on('playerDisconnect', function (data) {
-        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> disconnected.');
+        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> disconnected');
     });
 
     socket.on('playerJoin', function (data) {
@@ -279,7 +280,7 @@ function setupSocket(socket) {
             console.log("Unexpected playerJoin payload", data);
             return;
         }
-        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> joined.');
+        window.chat.addSystemLine('<b>' + (data.name.length < 1 ? 'An unnamed cell' : data.name) + '</b> joined');
     });
 
     var PTR = ['↑&#xfe0e;', '↖&#xfe0e;', '←&#xfe0e;', '↙&#xfe0e;', '↓&#xfe0e;', '↘&#xfe0e;', '→&#xfe0e;', '↗&#xfe0e;', '↑&#xfe0e;'];
@@ -300,15 +301,15 @@ function setupSocket(socket) {
         leaderboard = data.leaderboard;
         var status = "<ul>";
         for (var i = 0; i < leaderboard.length; i++) {
-            status += '<li id="lb_' + leaderboard[i].id + '"><div class="dir">↘&#xfe0e;' + getDirectionHint(leaderboard[i]) + '</div>';
+            status += '<li id="lb_' + leaderboard[i].id + '"><div class="dir">' + getDirectionHint(leaderboard[i]) + '</div>';
             if (leaderboard[i].id == player.id){
                 if(leaderboard[i].name.length !== 0)
-                    status += '<span class="me">' + '<span class="mass">' + player.massTotal + '</span>' + leaderboard[i].name + "</span>";
+                    status += '<span class="me"><span class="mass">' + player.massTotal + '</span>' + leaderboard[i].name + "</span>";
                 else
                     status += '<span class="me">' + "An unnamed cell</span>";
             } else {
                 if(leaderboard[i].name.length !== 0)
-                    status += '<span ">' + leaderboard[i].name + "</span> (" + leaderboard[i].massTotal + ")";
+                    status += '<span "><span class="mass">' + leaderboard[i].massTotal + '</span>' + leaderboard[i].name + "</span>";
                 else
                     status += 'An unnamed cell';
             }
@@ -385,6 +386,7 @@ function setupSocket(socket) {
         global.died = true;
         window.setTimeout(function() {
             document.getElementById('gameAreaWrapper').style.opacity = 0;
+            document.getElementById('startMenuWrapper').style.opacity = 1;
             document.getElementById('startMenuWrapper').style.maxHeight = '1000px';
             global.died = false;
             if (global.animLoopHandle) {

@@ -53,6 +53,12 @@ START MENU */
     -webkit-box-align: center;
     align-items: center;
     justify-content: center;
+    -webkit-transition: opacity 200ms, max-height 200ms;
+    -moz-transition: opacity 200ms, max-height 200ms;
+    -ms-transition: opacity 200ms, max-height 200ms;
+    -o-transition: opacity 200ms, max-height 200ms;
+    transition: opacity 200ms, max-height 200ms;
+    overflow: hidden;
 }
 ︎
 #startMenu {
@@ -115,15 +121,6 @@ START MENU */
     box-shadow: none;
 }
 
-#settings, #startMenuWrapper {
-    -webkit-transition: max-height 1s;
-    -moz-transition: max-height 1s;
-    -ms-transition: max-height 1s;
-    -o-transition: max-height 1s;
-    transition: max-height 1s;
-    overflow: hidden;
-}
-
 #startMenu .input-error {
     color: red;
     opacity: 0;
@@ -164,7 +161,6 @@ LEADERBOARD */
 
 #status {
     position: fixed;
-    color: rgba(0, 0, 0, 0.4);
     font-size: 14px;
     top: 0;
     right: 0;
@@ -179,29 +175,44 @@ LEADERBOARD */
 }
 
 #status li {
-    display: flex;
-    width: 100%;
+    width: 150px;
+    overflow: hidden;
     flex-direction: row;
     margin: 0;
-    padding: 2px 4px;
+    padding: 2px 0;
+    height: 22px;
 }
 
 #status .dir {
     margin-right: 2px;
-    color: rgba(0, 0, 0, 0.4);
     font-weight: bold;
+    width: 20px;
+    color: rgba(0, 0, 0, 0.4);
+    display: inline-block;
+    text-align: center;
+    float: left;
 }
 
 #status .mass {
-    margin-right: 2px;
-    color: rgba(0, 0, 0, 0.4);
+    margin-right: 5px;
+    display: inline-block;
+    width: 35px;
+    text-align: right;
 }
 
 #status span {
-    flex: 1 1 auto;
+    color: rgba(0, 0, 0, 0.2);
+    width: 128px;
+    display: inline-block;
+    float: left;
+    overflow: hidden;
+    white-space: nowrap;
 }
+
 #status .me {
-    color: rgba(0, 0, 0, 0.4);
+    color: #ea6153;
+    position:relative;
+    left: 22px;
 }
 
 /* //////////////////////////////////////////////////////////////////////////////////////////
@@ -210,8 +221,6 @@ SYSTEM MESSAGES */
 .chatbox {
     position: absolute;
     width: 300px;
-    /* height: 320px; */
-    /* background: rgba(255, 255, 255, 0.7); */
     bottom: 5px;
     padding-bottom: 110px;
     left: 5px;
@@ -224,7 +233,6 @@ SYSTEM MESSAGES */
     margin: 0;
     list-style: none;
     box-sizing: border-box;
-    /* height: 285px; */
     overflow: hidden;
 }
 
@@ -242,12 +250,7 @@ SYSTEM MESSAGES */
 }
 
 .chatbox .chat-list li.system {
-    color: #9b59b6;
-    font-style: italic;
-}
-
-.chatbox .chat-list li.system:before {
-    content: "» ";
+    color: rgba(0,0,0,0.4);
 }
 
 .chatbox .chat-input {

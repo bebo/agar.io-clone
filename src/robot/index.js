@@ -19,7 +19,7 @@ var height = c.gameHeight / 4;
 var robots_dir = path.resolve(__dirname, "./robots/*.js");
 var BaseBot = require('./robots/base.js');
 
-var names = ['Eve', 'Lucy', 'Shamus', 'Trex', 'mike', 'sonic', 'wallE', 'BOB'];
+var names = ['purpledove', 'captainheartthrob', 'iaminvincible', 'tinymoron', 'madking', 'jonsnow', 'mrbig', 'honeypiehugs'];
 
 function reconnect(name) {
     var controller = BaseBot(name);
