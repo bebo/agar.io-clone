@@ -63,9 +63,11 @@ function setAudio(checkbox) {
     if (checkbox.checked && mute === false) {
         mute = true;
         Bebo.hangup(false, true);
+        document.getElementById('muteAudio').addClass('off');
     } else if (mute === true) {
         mute = false;
         Bebo.callin({video: false});
+        document.getElementById('muteAudio').removeClass('off');
     }
 }
 
@@ -193,17 +195,17 @@ window.canvas = new Canvas();
 window.chat = new ChatClient();
 
 
-var visibleBorderSetting = document.getElementById('visBord');
-visibleBorderSetting.onchange = settings.toggleBorder;
+// var visibleBorderSetting = document.getElementById('visBord');
+// visibleBorderSetting.onchange = settings.toggleBorder;
 
-var showMassSetting = document.getElementById('showMass');
-showMassSetting.onchange = settings.toggleMass;
+// var showMassSetting = document.getElementById('showMass');
+// showMassSetting.onchange = settings.toggleMass;
 
-var continuitySetting = document.getElementById('continuity');
-continuitySetting.onchange = settings.toggleContinuity;
+// var continuitySetting = document.getElementById('continuity');
+// continuitySetting.onchange = settings.toggleContinuity;
 
-var roundFoodSetting = document.getElementById('roundFood');
-roundFoodSetting.onchange = settings.toggleRoundFood;
+// var roundFoodSetting = document.getElementById('roundFood');
+// roundFoodSetting.onchange = settings.toggleRoundFood;
 
 var c = window.canvas.cv;
 var graph = c.getContext('2d');
@@ -297,8 +299,7 @@ function setupSocket(socket) {
 
     socket.on('leaderboard', function (data) {
         leaderboard = data.leaderboard;
-        var status = '<span class="title">Leaderboard</span>';
-        status += "<ul>";
+        var status = "<ul>";
         for (var i = 0; i < leaderboard.length; i++) {
             status += '<li id="lb_' + leaderboard[i].id + '"><div class="dir">' + getDirectionHint(leaderboard[i]) + '</div>';
             if (leaderboard[i].id == player.id){
@@ -315,7 +316,7 @@ function setupSocket(socket) {
             status += '</li>';
         }
         status += '</ul>';
-        status += "fps: " + global.fps;
+        // status += "fps: " + global.fps;
         //status += '<br />Players: ' + data.players;
         document.getElementById('status').innerHTML = status;
     });
@@ -427,7 +428,7 @@ function drawCircle(centerX, centerY, radius, sides) {
 }
 
 function drawVirusCircle(virus, centerX, centerY, radius, sides) {
-    
+
     var theta = 0;
     var x = 0;
     var y = 0;
@@ -583,7 +584,7 @@ function valueInRange(min, max, value) {
 function drawgrid() {
      graph.lineWidth = 1 * zoom;
      graph.strokeStyle = global.lineColor;
-     graph.globalAlpha = 0.15;
+     graph.globalAlpha = 0.05;
      graph.beginPath();
 
     for (var x = zoom * (global.xoffset - player.x); x < global.screenWidth ; x += zoom * global.screenHeight / 18 ) {
@@ -729,7 +730,7 @@ function gameLoop() {
             });
 
             drawPlayers(orderMass);
-            
+
             if (window.canvas.target.x !== last_target.x || window.canvas.target.y !== last_target.y || (tick - last_heartbeat) > 60) {
                 last_target.y = window.canvas.target.y;
                 last_target.x = window.canvas.target.x;

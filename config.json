@@ -5,9 +5,9 @@
     "limitSplit": 16,
     "defaultPlayerMass": 5,
 	"virus": {
-        "fill": "#33ff33",
-        "stroke": "#19D119",
-        "strokeWidth": 7,
+        "fill": "#FA3939",
+        "stroke": "#C73030",
+        "strokeWidth": 4,
         "defaultMass": {
             "from": 75,
             "to": 150
@@ -19,7 +19,7 @@
     "adminPass": "disabled",
     "gameMass": 20000,
     "maxFood": 1000,
-    "maxVirus": 25,
+    "maxVirus": 15,
     "slowBase": 15,
     "logChat": 0,
     "networkUpdateMs": 41,
