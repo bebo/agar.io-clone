@@ -58,27 +58,26 @@ function validNick() {
 
 
 var mute = true;
-function setAudio(checkbox) {
-    console.log("muteAudio", checkbox.checked);
-    if (checkbox.checked && mute === false) {
+function toggleAudio() {
+    if (mute === false) {
         mute = true;
         Bebo.hangup(false, true);
-        document.getElementById('muteAudio').addClass('off');
+        $('#muteAudio').addClass('off');
     } else if (mute === true) {
         mute = false;
         Bebo.callin({video: false});
-        document.getElementById('muteAudio').removeClass('off');
+        $('#muteAudio').removeClass('off');
     }
 }
 
 $(document).ready(function() {
     Bebo.onReady(function(){
         console.log("ready");
-        var muteAudio = document.getElementById('muteAudio');
-        muteAudio.onchange = function(e) {
-            setAudio(muteAudio);
-        };
-        setAudio(muteAudio);
+        // var muteAudio = document.getElementById('muteAudio');
+        $('#muteAudio').click(function(e) {
+            toggleAudio();
+        });
+        toggleAudio();
         Bebo.User.getUser("me", function(err, u) {
             console.log("me", err, u);
             global.playerName = u.username;
