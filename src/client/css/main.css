@@ -12,13 +12,6 @@ html, body, canvas {
     padding: 0;
 }
 
-div {
-    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
-    -moz-user-select: none; /* mozilla browsers */
-    -khtml-user-select: none; /* webkit (konqueror) browsers */
-    -ms-user-select: none; /* IE10+ */
-}
-
 #gameAreaWrapper {
     position: absolute !important;
     top: 0;
@@ -32,6 +25,10 @@ TYPEFACES */
 * {
     font-family: 'Montserrat', 'Open Sans', 'San Francisco', 'Roboto', 'Arial', sans-serif;
     font-size: 14px;
+    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
 }
 
 /* //////////////////////////////////////////////////////////////////////////////////////////
