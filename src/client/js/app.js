@@ -57,28 +57,9 @@ function validNick() {
     return regex.exec(playerNameInput.value) !== null;
 }
 
-
-var mute = true;
-function toggleAudio() {
-    if (mute === false) {
-        mute = true;
-        Bebo.hangup(false, true);
-        $('#muteAudio').addClass('off');
-    } else if (mute === true) {
-        mute = false;
-        Bebo.callin({video: false});
-        $('#muteAudio').removeClass('off');
-    }
-}
-
 $(document).ready(function() {
     Bebo.onReady(function(){
         console.log("ready");
-        // var muteAudio = document.getElementById('muteAudio');
-        $('#muteAudio').click(function(e) {
-            toggleAudio();
-        });
-        toggleAudio();
         Bebo.User.getUser("me", function(err, u) {
             console.log("me", err, u);
             global.playerName = u.username;
